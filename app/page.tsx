@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import { Search, Car, Fuel, Gauge, ArrowRight, Sparkles, Loader2, CheckCircle } from 'lucide-react'
-import Link from 'next/link' // <--- Added this import
+import Link from 'next/link'
 
 export default function Home() {
   const [allCars, setAllCars] = useState<any[]>([]) 
@@ -11,7 +11,7 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState('')
   const [searchStatus, setSearchStatus] = useState('idle') 
 
-  // NEW: State for the Request Form
+  // Request Form State
   const [requestData, setRequestData] = useState({ details: '', contact: '' })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [requestSent, setRequestSent] = useState(false)
@@ -37,8 +37,6 @@ export default function Home() {
   const handleSearch = (e: any) => {
     const term = e.target.value.toLowerCase()
     setSearchTerm(term)
-    
-    // Auto-fill the request form "details" with what they searched
     setRequestData(prev => ({ ...prev, details: term }))
 
     if (term === '') {
@@ -58,19 +56,14 @@ export default function Home() {
     setSearchStatus(results.length > 0 ? 'found' : 'empty')
   }
 
-  // 3. NEW: Submit Request Function
+  // 3. Submit Request
   const handleRequestSubmit = async (e: any) => {
     e.preventDefault()
     setIsSubmitting(true)
 
     const { error } = await supabase
       .from('requests')
-      .insert([
-        { 
-          car_details: requestData.details, 
-          contact_info: requestData.contact 
-        }
-      ])
+      .insert([{ car_details: requestData.details, contact_info: requestData.contact }])
 
     if (!error) {
       setRequestSent(true)
@@ -92,16 +85,19 @@ export default function Home() {
       <nav className="bg-white dark:bg-gray-800 shadow-sm p-4 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-2 text-blue-700 dark:text-blue-400 font-bold text-xl">
-            <Car /> <span>TAJIRI MOTORS</span>
+            <Car /> <span>CARTISO</span>
           </div>
-          <a href="/admin" className="text-sm font-medium text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-300">Staff Login</a>
+          {/* Staff Login Link */}
+          <Link href="/admin" className="text-sm font-medium text-gray-400 hover:text-blue-600 dark:hover:text-blue-300">
+            Staff Access
+          </Link>
         </div>
       </nav>
 
       {/* Hero */}
       <div className="bg-blue-700 dark:bg-blue-900 text-white py-20 px-4 text-center">
         <h1 className="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight">Find Your Dream Car in Kenya</h1>
-        <p className="text-blue-100 mb-8 text-lg">Search our inventory or let us import it for you.</p>
+        <p className="text-blue-100 mb-8 text-lg">Search the CARTISO inventory or let us import it for you.</p>
         
         <div className="max-w-2xl mx-auto relative">
           <input 
@@ -120,7 +116,6 @@ export default function Home() {
         
         {loading && <div className="text-center py-20">Loading inventory...</div>}
 
-        {/* Inventory Grid */}
         {!loading && searchStatus !== 'empty' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredCars.map((car) => (
@@ -148,12 +143,9 @@ export default function Home() {
                   </div>
                   <div className="flex justify-between items-center border-t pt-4 dark:border-gray-700">
                     <span className="text-green-700 dark:text-green-400 font-bold text-lg">{formatPrice(car.price)}</span>
-                    
-                    {/* UPDATED: This button is now a Link */}
                     <Link href={`/car/${car.id}`} className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full">
                       <ArrowRight size={20} />
                     </Link>
-
                   </div>
                 </div>
               </div>
@@ -161,10 +153,9 @@ export default function Home() {
           </div>
         )}
 
-        {/* THE ACTIVE REQUEST FORM */}
+        {/* Request Form */}
         {!loading && searchStatus === 'empty' && (
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl text-center max-w-2xl mx-auto mt-8 border border-gray-200 dark:border-gray-700 transition-all">
-            
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl text-center max-w-2xl mx-auto mt-8 border border-gray-200 dark:border-gray-700">
             {requestSent ? (
               <div className="py-10 animate-in fade-in zoom-in duration-500">
                 <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
@@ -181,38 +172,25 @@ export default function Home() {
                     <Sparkles className="text-blue-600 dark:text-blue-400 w-8 h-8" />
                   </div>
                 </div>
-                <h2 className="text-2xl font-bold mb-2">We don't have that in stock right now.</h2>
+                <h2 className="text-2xl font-bold mb-2">We don't have that in stock.</h2>
                 <p className="text-gray-600 dark:text-gray-400 mb-6">But we can find it for you! Tell us exactly what you want.</p>
-                
                 <form onSubmit={handleRequestSubmit} className="space-y-4 text-left">
                   <div>
                     <label className="text-xs font-bold uppercase text-gray-500 dark:text-gray-400">What are you looking for?</label>
-                    <input 
-                      required
-                      className="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600 outline-none focus:ring-2 focus:ring-blue-500" 
-                      value={requestData.details}
-                      onChange={(e) => setRequestData({...requestData, details: e.target.value})}
-                    />
+                    <input required className="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600 outline-none focus:ring-2 focus:ring-blue-500" value={requestData.details} onChange={(e) => setRequestData({...requestData, details: e.target.value})} />
                   </div>
                   <div>
-                    <label className="text-xs font-bold uppercase text-gray-500 dark:text-gray-400">Your Contact (WhatsApp / Phone / Email)</label>
-                    <input 
-                      required
-                      placeholder="e.g. 0712 345 678 or email@gmail.com"
-                      className="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600 outline-none focus:ring-2 focus:ring-blue-500" 
-                      value={requestData.contact}
-                      onChange={(e) => setRequestData({...requestData, contact: e.target.value})}
-                    />
+                    <label className="text-xs font-bold uppercase text-gray-500 dark:text-gray-400">Your Contact</label>
+                    <input required placeholder="Phone or Email" className="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600 outline-none focus:ring-2 focus:ring-blue-500" value={requestData.contact} onChange={(e) => setRequestData({...requestData, contact: e.target.value})} />
                   </div>
-                  <button type="submit" disabled={isSubmitting} className="w-full bg-black dark:bg-white dark:text-black text-white p-4 rounded-lg font-bold hover:bg-gray-800 dark:hover:bg-gray-200 transition flex justify-center">
-                    {isSubmitting ? <Loader2 className="animate-spin" /> : 'SEND REQUEST TO DEALERSHIP'}
+                  <button type="submit" disabled={isSubmitting} className="w-full bg-black dark:bg-white dark:text-black text-white p-4 rounded-lg font-bold hover:bg-gray-800 transition flex justify-center">
+                    {isSubmitting ? <Loader2 className="animate-spin" /> : 'SEND REQUEST'}
                   </button>
                 </form>
               </>
             )}
           </div>
         )}
-
       </div>
     </div>
   )
