@@ -85,7 +85,7 @@ export default function Home() {
       <nav className="bg-white dark:bg-gray-800 shadow-sm p-4 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-2 text-blue-700 dark:text-blue-400 font-bold text-xl">
-            <Car /> <span>CARTISO</span>
+            <Car /> <span>JOCADA Motors</span>
           </div>
           {/* Staff Login Link */}
           <Link href="/admin" className="text-sm font-medium text-gray-400 hover:text-blue-600 dark:hover:text-blue-300">
@@ -97,7 +97,7 @@ export default function Home() {
       {/* Hero */}
       <div className="bg-blue-700 dark:bg-blue-900 text-white py-20 px-4 text-center">
         <h1 className="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight">Find Your Dream Car in Kenya</h1>
-        <p className="text-blue-100 mb-8 text-lg">Search the CARTISO inventory or let us import it for you.</p>
+        <p className="text-blue-100 mb-8 text-lg">Search the JOCADA inventory or let us import it for you.</p>
         
         <div className="max-w-2xl mx-auto relative">
           <input 

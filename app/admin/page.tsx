@@ -119,7 +119,7 @@ export default function AdminPage() {
           <div className="flex items-center gap-3 text-blue-800 dark:text-blue-400">
             <Car size={32} />
             {/* BRANDING UPDATE HERE */}
-            <h1 className="text-3xl font-extrabold tracking-tight">CARTISO Admin</h1>
+            <h1 className="text-3xl font-extrabold tracking-tight">JOCADA Admin</h1>
           </div>
           <a href="/" className="text-sm font-bold text-gray-500 hover:text-blue-600">Back to Website</a>
         </div>
