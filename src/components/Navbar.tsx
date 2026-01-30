@@ -11,9 +11,9 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           
-          {/* Logo */}
+          {/* Logo - Updated to Tajiree */}
           <Link href="/" className="text-2xl font-bold text-blue-500">
-            Tajiri<span className="text-white">Motors</span>
+            Tajiree<span className="text-white">Motors</span>
           </Link>
 
           {/* Desktop Menu (Hidden on Mobile) */}
