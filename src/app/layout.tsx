@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-// 1. IMPORT THE NEW FONTS
+// 1. Import the luxury fonts
 import { Playfair_Display, Montserrat } from "next/font/google"; 
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar"; // Ensure this path is correct
 
-// 2. CONFIGURE THEM
+// 2. Configure the fonts
 const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-playfair",
@@ -20,7 +19,7 @@ const montserrat = Montserrat({
 
 export const metadata: Metadata = {
   title: "Tajiri Motors | Premium Cars",
-  description: "The best car deals in Mombasa.",
+  description: "The premier luxury car dealership in Mombasa.",
 };
 
 export default function RootLayout({
@@ -30,15 +29,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      {/* 3. APPLY THE VARIABLES HERE */}
       <body
-        className={`${playfair.variable} ${montserrat.variable} antialiased flex flex-col min-h-screen bg-[#141416]`}
+        // 3. Apply the font variables and the obsidian background globally
+        className={`${playfair.variable} ${montserrat.variable} antialiased bg-obsidian text-platinum min-h-screen flex flex-col`}
       >
         <Navbar />
         <main className="flex-grow">
           {children}
         </main>
-        <Footer />
+        {/* You can add Footer here later */}
       </body>
     </html>
   );

@@ -3,39 +3,28 @@
 @tailwind utilities;
 
 :root {
-  /* "Obsidian & Bronze" Theme */
   --foreground-rgb: 230, 230, 230;
   --background-base: 20, 20, 22;
-  --accent-gold: 180, 142, 85;
-  --accent-gold-hover: 153, 118, 65;
 }
 
 @layer base {
   body {
-    color: rgb(var(--foreground-rgb));
-    background-color: rgb(var(--background-base));
-    background-image: radial-gradient(circle at top, #2a2a2e, #141416); 
-    min-height: 100vh;
-    
-    /* NEW TYPOGRAPHY SETTINGS */
-    font-family: var(--font-montserrat), sans-serif; /* Default to clean sans */
+    /* Use the custom Obsidian color we defined in Tailwind config */
+    @apply bg-obsidian text-platinum;
+    /* Force the subtle gradient */
+    background-image: radial-gradient(circle at 50% 0%, #2a2a2e 0%, #141416 100%);
+    background-attachment: fixed; /* Keeps the glow at top even when scrolling */
   }
 
-  /* Automatically make all Headings use the Luxury Serif font */
+  /* HEADINGS: Force Playfair Display on all headings */
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-playfair), serif;
-    font-weight: 600; /* Semi-bold looks more premium */
-    letter-spacing: -0.02em; /* Tight tracking looks tighter/more expensive */
+    @apply tracking-tight font-medium;
   }
 }
 
-/* ... keep your scrollbar settings below ... */
+/* Scrollbar Styling to match Gold Theme */
 ::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: #141416; }
-::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #b48e55; }
-
-::selection {
-  background-color: #b48e55;
-  color: black;
-}
+::-webkit-scrollbar-track { @apply bg-obsidian; }
+::-webkit-scrollbar-thumb { @apply bg-zinc-800 rounded-full; }
+::-webkit-scrollbar-thumb:hover { @apply bg-gold; }
