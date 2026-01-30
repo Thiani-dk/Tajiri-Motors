@@ -3,12 +3,52 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  /* Premium Dark Palette */
+  --foreground-rgb: 226, 232, 240; /* Slate 200 (Softer than harsh white) */
+  --background-base: 2, 6, 23;     /* Slate 950 (Deepest Blue-Black) */
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: #0f172a; /* Slate 900 */
+@layer base {
+  body {
+    color: rgb(var(--foreground-rgb));
+    background-color: rgb(var(--background-base));
+    /* Adds a very subtle gradient for depth, preventing it from looking flat */
+    background-image: linear-gradient(to bottom, #020617, #0f172a); 
+    min-height: 100vh;
+    /* Improves font readability */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Smooth scrolling for the whole page */
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* --- OPTIONAL: Custom Scrollbar (Chrome/Safari/Edge) --- */
+/* This makes the browser scrollbar look part of the dark theme */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #020617; /* Matches body background */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e293b; /* Slate 800 */
+  border-radius: 5px;
+  border: 2px solid #020617; /* Creates padding effect */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #334155; /* Slate 700 on hover */
+}
+
+/* --- OPTIONAL: Selection Color --- */
+/* When a user highlights text, it turns blue instead of default blue */
+::selection {
+  background-color: #3b82f6; /* Blue 500 */
+  color: white;
 }
