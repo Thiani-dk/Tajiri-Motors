@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabaseClient';
 import Link from 'next/link';
 import Image from 'next/image';
-import Navbar from '@/app/components/Navbar';
+import Navbar from '@/components/Navbar';
 
 // Fetch all cars, newest first
 async function getInventory() {

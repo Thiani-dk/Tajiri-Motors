@@ -1,5 +1,5 @@
-import Navbar from "./components/Navbar";
-import HeroSlider from "./components/HeroSlider";
+import Navbar from "../components/Navbar";
+import HeroSlider from "../components/HeroSlider";
 import { Search } from 'lucide-react';
 
 export default function Home() {

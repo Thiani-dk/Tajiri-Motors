@@ -2,7 +2,7 @@ import { supabase } from '@/lib/supabaseClient';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft, Check, Phone, MessageCircle, Calendar, Gauge, Settings, Fuel } from 'lucide-react';
-import Navbar from '@/app/components/Navbar';
+import Navbar from '@/components/Navbar';
 
 // This function fetches the car data before the page loads (Server Component)
 async function getCar(id: string) {
