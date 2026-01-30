@@ -1,28 +1,27 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
-  // Check if the user is trying to access /admin
-  if (request.nextUrl.pathname.startsWith('/admin')) {
+  // 1. Check if user is trying to access the admin panel
+  if (request.nextUrl.pathname.startsWith("/admin")) {
     
-    // Exception: Allow access to the login page itself!
-    if (request.nextUrl.pathname === '/admin/login') {
+    // 2. Exception: Allow them to visit the login page itself!
+    if (request.nextUrl.pathname === "/admin/login") {
       return NextResponse.next();
     }
 
-    // Check for the session cookie
-    const hasSession = request.cookies.get('admin_session');
+    // 3. Check for the "admin_session" cookie
+    const session = request.cookies.get("admin_session");
 
-    // If no cookie, kick them to the login page
-    if (!hasSession) {
-      return NextResponse.redirect(new URL('/admin/login', request.url));
+    // 4. If no cookie, kick them to the login page
+    if (!session) {
+      return NextResponse.redirect(new URL("/admin/login", request.url));
     }
   }
 
   return NextResponse.next();
 }
 
-// Configure which paths this middleware runs on
 export const config = {
-  matcher: '/admin/:path*',
+  matcher: ["/admin/:path*"],
 };
