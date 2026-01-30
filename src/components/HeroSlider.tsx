@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
 
 export default function HeroSlider() {
   const [featuredCars, setFeaturedCars] = useState<any[]>([]);
@@ -16,8 +16,8 @@ export default function HeroSlider() {
       const { data } = await supabase
         .from('cars')
         .select('*')
-        .eq('is_featured', true) // Only get the ones you toggled "Spotlight" on
-        .limit(5); // Limit to top 5
+        .eq('is_featured', true)
+        .limit(5);
 
       if (data && data.length > 0) {
         setFeaturedCars(data);
@@ -27,12 +27,12 @@ export default function HeroSlider() {
     fetchCars();
   }, []);
 
-  // Auto-scroll every 5 seconds
+  // 2. Auto-scroll Logic
   useEffect(() => {
     if (featuredCars.length === 0) return;
     const timer = setInterval(() => {
-      nextSlide();
-    }, 5000);
+      setCurrentIndex((prev) => (prev === featuredCars.length - 1 ? 0 : prev + 1));
+    }, 6000); // 6 seconds for better readability
     return () => clearInterval(timer);
   }, [currentIndex, featuredCars.length]);
 
@@ -44,87 +44,114 @@ export default function HeroSlider() {
     setCurrentIndex((prev) => (prev === 0 ? featuredCars.length - 1 : prev - 1));
   };
 
-  // If no featured cars are found, return null (or you could return a fallback static hero)
-  if (featuredCars.length === 0) return null;
+  // Fallback while loading
+  if (featuredCars.length === 0) {
+    return <div className="h-[85vh] w-full bg-[#141416] animate-pulse" />;
+  }
 
   return (
-    <div className="relative w-full h-[600px] md:h-[700px] overflow-hidden bg-slate-900 group">
+    <div className="relative w-full h-[85vh] overflow-hidden bg-[#141416] group">
       
-      {/* Background Image & Content */}
+      {/* BACKGROUND SLIDER */}
       <div 
-        className="flex transition-transform duration-700 ease-in-out h-full"
+        className="flex transition-transform duration-1000 ease-in-out h-full"
         style={{ transform: `translateX(-${currentIndex * 100}%)` }}
       >
         {featuredCars.map((car) => (
           <div key={car.id} className="min-w-full relative h-full">
-            {/* The Image */}
+            {/* Image */}
             <div className="absolute inset-0">
                {car.images && car.images[0] && (
                  <Image 
                    src={car.images[0]} 
                    alt={car.model} 
                    fill 
-                   className="object-cover opacity-60"
+                   className="object-cover"
                    priority
                  />
                )}
-               {/* Gradient Overlay */}
-               <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent" />
+               {/* Luxury Dark Gradient Overlay */}
+               <div className="absolute inset-0 bg-gradient-to-t from-[#141416] via-black/50 to-transparent" />
+               <div className="absolute inset-0 bg-black/20" /> {/* General dimmer */}
             </div>
 
-            {/* The Details (Price & Name) */}
-            <div className="absolute bottom-0 left-0 w-full p-6 md:p-16 pb-24 md:pb-32 flex flex-col items-start justify-end h-full z-10">
-              <span className="bg-blue-600 text-white px-3 py-1 text-sm font-bold uppercase tracking-wider rounded-md mb-4 shadow-lg shadow-blue-900/50">
-                Featured Deal
+            {/* TEXT CONTENT */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 pb-20 z-10">
+              <span className="bg-[#b48e55] text-black px-5 py-1 text-xs font-bold uppercase tracking-[0.2em] rounded-full mb-6 animate-fade-in-up">
+                Featured Collection
               </span>
-              <h2 className="text-4xl md:text-7xl font-bold text-white mb-2 tracking-tight">
-                {car.year} {car.make} <span className="text-blue-400">{car.model}</span>
-              </h2>
-              <p className="text-lg md:text-xl text-slate-300 mb-8 max-w-xl line-clamp-2 font-light">
-                {car.description}
+              
+              <h1 className="text-5xl md:text-7xl font-serif text-white mb-4 drop-shadow-lg">
+                {car.year} {car.make} <span className="text-[#b48e55]">{car.model}</span>
+              </h1>
+              
+              <p className="text-xl text-zinc-200 mb-8 max-w-2xl font-light drop-shadow-md">
+                {car.description ? car.description.substring(0, 100) + "..." : "Experience premium luxury and performance."}
               </p>
-              <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-                <div className="text-3xl md:text-4xl font-bold text-emerald-400">
-                  Ksh {Number(car.price).toLocaleString()}
-                </div>
-                <Link 
-                  href={`/inventory/${car.id}`}
-                  className="bg-white text-slate-900 px-8 py-3 rounded-full font-bold hover:bg-blue-50 transition-colors shadow-lg"
-                >
-                  View Details
-                </Link>
+
+              <div className="flex items-center gap-6">
+                 <div className="text-3xl font-bold text-white border-r border-white/20 pr-6">
+                    Ksh {Number(car.price).toLocaleString()}
+                 </div>
+                 <Link 
+                   href={`/inventory/${car.id}`}
+                   className="bg-white hover:bg-[#b48e55] text-black font-bold px-8 py-3 rounded-full transition-all duration-300"
+                 >
+                   View Details
+                 </Link>
               </div>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Navigation Arrows */}
+      {/* NAVIGATION ARROWS (Hidden on mobile, visible on hover desktop) */}
       <button 
         onClick={prevSlide}
-        className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-3 rounded-full backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all z-20"
+        className="hidden md:block absolute left-8 top-1/2 -translate-y-1/2 text-white/50 hover:text-[#b48e55] transition-colors z-20"
       >
-        <ChevronLeft size={30} />
+        <ChevronLeft size={48} strokeWidth={1} />
       </button>
       <button 
         onClick={nextSlide}
-        className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-3 rounded-full backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all z-20"
+        className="hidden md:block absolute right-8 top-1/2 -translate-y-1/2 text-white/50 hover:text-[#b48e55] transition-colors z-20"
       >
-        <ChevronRight size={30} />
+        <ChevronRight size={48} strokeWidth={1} />
       </button>
 
-      {/* Dots Indicator */}
-      <div className="absolute bottom-8 right-8 flex gap-2 z-20">
-        {featuredCars.map((_, idx) => (
-          <button
-            key={idx}
-            onClick={() => setCurrentIndex(idx)}
-            className={`h-2 rounded-full transition-all duration-300 ${
-              currentIndex === idx ? 'bg-blue-500 w-8' : 'bg-white/50 w-2 hover:bg-white'
-            }`}
-          />
-        ))}
+      {/* SEARCH BAR (Floating at Bottom) */}
+      <div className="absolute bottom-12 left-0 right-0 z-30 px-4">
+        <div className="max-w-5xl mx-auto bg-[#1e1e24]/90 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-2xl shadow-black/50">
+          <div className="flex items-center gap-2 mb-4">
+             <Search className="text-[#b48e55]" size={20} />
+             <span className="text-white font-serif text-lg">Find Your Dream Car</span>
+          </div>
+          
+          <form className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <input 
+              type="text" 
+              placeholder="Make (e.g. Toyota)" 
+              className="bg-[#141416] border border-zinc-700 text-white px-4 py-3 rounded-xl focus:outline-none focus:border-[#b48e55] transition-colors"
+            />
+             <input 
+              type="text" 
+              placeholder="Model (e.g. Harrier)" 
+              className="bg-[#141416] border border-zinc-700 text-white px-4 py-3 rounded-xl focus:outline-none focus:border-[#b48e55] transition-colors"
+            />
+             <select className="bg-[#141416] border border-zinc-700 text-zinc-400 px-4 py-3 rounded-xl focus:outline-none focus:border-[#b48e55] transition-colors appearance-none">
+                <option>Max Price</option>
+                <option>3M - 5M</option>
+                <option>5M - 10M</option>
+                <option>10M+</option>
+             </select>
+             
+             <button type="submit" className="bg-[#b48e55] hover:bg-[#997641] text-black font-bold py-3 rounded-xl transition-all shadow-lg shadow-[#b48e55]/20">
+               Search
+             </button>
+          </form>
+        </div>
       </div>
+
     </div>
   );
 }
