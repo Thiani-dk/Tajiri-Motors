@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { supabase } from '../../lib/supabaseClient';
-import { Upload, CheckCircle, Loader2, Car, Plus } from 'lucide-react';
+import { supabase } from '../../lib/supabaseClient'; // Make sure this path matches your folder structure
+import { Upload, CheckCircle, Loader2, Car, Plus, Star } from 'lucide-react';
 
 export default function AdminPage() {
   const [uploading, setUploading] = useState(false);
@@ -15,8 +15,12 @@ export default function AdminPage() {
   const [fuel, setFuel] = useState('Petrol');
   const [transmission, setTransmission] = useState('Automatic');
   const [year, setYear] = useState('');
-  const [bodyType, setBodyType] = useState('SUV'); // New field for Pickup/Van/SUV
-  const [condition, setCondition] = useState('Foreign Used'); // New field for Local/Import
+  const [bodyType, setBodyType] = useState('SUV');
+  const [condition, setCondition] = useState('Foreign Used');
+  
+  // NEW: Slider Toggle State
+  const [isSlider, setIsSlider] = useState(false); 
+  
   const [imageFile, setImageFile] = useState<File | null>(null);
 
   const handleUpload = async (e: React.FormEvent) => {
@@ -57,19 +61,24 @@ export default function AdminPage() {
             fuel,
             transmission,
             year,
+            body_type: bodyType, // Make sure your DB column is named body_type (or match what you have)
+            condition,           
             image_url: publicUrl,
-            // We will add the description/body type logic in the next DB update
+            is_slider: isSlider, // <--- THIS IS THE NEW FIELD
           },
         ]);
 
       if (dbError) throw dbError;
 
       setStatus('Success! Car added to inventory.');
+      
       // Reset Form
       setTitle('');
       setPrice('');
       setMileage('');
+      setYear('');
       setImageFile(null);
+      setIsSlider(false); // Reset toggle
       
     } catch (error: any) {
       console.error('Error:', error);
@@ -92,16 +101,6 @@ export default function AdminPage() {
             </h1>
             <p className="text-slate-400 mt-2">Manage your inventory and website content.</p>
           </div>
-        </div>
-
-        {/* Tabs - We will activate 'Site Settings' next */}
-        <div className="flex gap-4 mb-8 border-b border-slate-800">
-          <button className="px-4 py-2 text-blue-400 border-b-2 border-blue-400 font-medium">
-            Add Inventory
-          </button>
-          <button className="px-4 py-2 text-slate-500 hover:text-slate-300 transition-colors cursor-not-allowed" title="Coming next step">
-            Site Settings (Coming Next)
-          </button>
         </div>
 
         {/* Upload Form */}
@@ -163,7 +162,7 @@ export default function AdminPage() {
 
               {/* Year */}
               <div>
-                <label className="block text-sm font-medium text-slate-400 mb-2">Year of Manufacture</label>
+                <label className="block text-sm font-medium text-slate-400 mb-2">Year</label>
                 <input 
                   value={year} 
                   onChange={e => setYear(e.target.value)} 
@@ -206,7 +205,7 @@ export default function AdminPage() {
                 </select>
               </div>
 
-              {/* Body Type (Visual Selector) */}
+              {/* Body Type */}
               <div>
                 <label className="block text-sm font-medium text-slate-400 mb-2">Body Type</label>
                 <select value={bodyType} onChange={e => setBodyType(e.target.value)} className="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 outline-none cursor-pointer">
@@ -218,6 +217,34 @@ export default function AdminPage() {
                 </select>
               </div>
 
+              {/* Condition */}
+               <div>
+                <label className="block text-sm font-medium text-slate-400 mb-2">Condition</label>
+                <select value={condition} onChange={e => setCondition(e.target.value)} className="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 outline-none cursor-pointer">
+                  <option>Foreign Used</option>
+                  <option>Locally Used</option>
+                  <option>Brand New</option>
+                </select>
+              </div>
+
+            </div>
+
+            {/* --- NEW: FEATURED TOGGLE --- */}
+            <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex items-center justify-between cursor-pointer" onClick={() => setIsSlider(!isSlider)}>
+              <div className="flex items-center gap-3">
+                <div className={`p-2 rounded-full ${isSlider ? 'bg-yellow-500/20 text-yellow-500' : 'bg-slate-800 text-slate-500'}`}>
+                  <Star size={24} fill={isSlider ? "currentColor" : "none"} />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-white">Show on Homepage Slider?</h3>
+                  <p className="text-xs text-slate-400">If on, this car will appear in the big hero slideshow.</p>
+                </div>
+              </div>
+              
+              {/* Toggle Switch UI */}
+              <div className={`w-12 h-6 rounded-full relative transition-colors ${isSlider ? 'bg-blue-600' : 'bg-slate-700'}`}>
+                <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${isSlider ? 'left-7' : 'left-1'}`} />
+              </div>
             </div>
 
             {/* Submit Button */}
@@ -227,7 +254,7 @@ export default function AdminPage() {
               className="w-full py-4 mt-4 bg-blue-600 hover:bg-blue-500 rounded-xl font-bold text-lg text-white shadow-lg shadow-blue-900/20 transition-all flex justify-center items-center gap-2 active:scale-95"
             >
               {uploading ? (
-                <> <Loader2 className="animate-spin" /> Uploading Vehicle... </>
+                <> <Loader2 className="animate-spin" /> Uploading... </>
               ) : (
                 <> <CheckCircle size={20} /> Publish to Website </>
               )}
