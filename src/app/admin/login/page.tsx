@@ -1,54 +1,61 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Lock } from 'lucide-react';
 
 export default function AdminLogin() {
-  const [pin, setPin] = useState("");
-  const [error, setError] = useState("");
+  const [pin, setPin] = useState('');
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-
-    const res = await fetch("/api/admin/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ pin }),
-    });
-
-    if (res.ok) {
-      router.push("/admin");
+    if (pin === '1234') { // Replace with real auth later
+      document.cookie = "admin-token=secret; path=/";
+      router.push('/admin');
     } else {
-      setError("Incorrect PIN");
+      alert('Invalid PIN');
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-96">
-        <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">Admin Access</h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="min-h-screen bg-obsidian flex items-center justify-center p-4 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#2a2a2e] to-[#141416]">
+      <div className="max-w-md w-full bg-[#1e1e24] p-8 rounded-2xl border border-white/10 shadow-2xl">
+        <div className="flex justify-center mb-8">
+          <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center">
+            <Lock className="text-gold" size={32} />
+          </div>
+        </div>
+        
+        <h1 className="text-3xl font-serif text-center text-white mb-2">Admin Access</h1>
+        <p className="text-center text-zinc-400 mb-8">Enter your secure PIN to continue</p>
+
+        <form onSubmit={handleLogin} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Enter PIN</label>
+            <label className="block text-sm font-medium text-zinc-300 mb-2">Security PIN</label>
             <input
               type="password"
               value={pin}
               onChange={(e) => setPin(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-900"
-              placeholder="****"
-              autoFocus
+              className="w-full bg-black/50 border border-zinc-700 text-white text-center text-2xl tracking-[0.5em] rounded-xl px-4 py-4 focus:outline-none focus:border-gold transition-colors"
+              placeholder="••••"
+              maxLength={4}
             />
           </div>
-          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+          
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors font-medium"
+            className="w-full bg-gold hover:bg-gold-hover text-black font-bold py-4 rounded-xl transition-all hover:scale-[1.02] shadow-[0_0_20px_rgba(180,142,85,0.2)]"
           >
             Access Dashboard
           </button>
         </form>
+        
+        <div className="mt-8 text-center">
+          <a href="/" className="text-sm text-zinc-500 hover:text-white transition-colors">
+            &larr; Return to Website
+          </a>
+        </div>
       </div>
     </div>
   );

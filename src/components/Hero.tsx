@@ -1,88 +1,111 @@
 'use client';
 
-import { Search, Calendar, Settings } from 'lucide-react';
-import Image from 'next/image';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { Search, ChevronRight, ChevronLeft } from 'lucide-react';
+
+const slides = [
+  {
+    id: 1,
+    image: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=1920&auto=format&fit=crop",
+    title: "Toyota Harrier",
+    subtitle: "2017 · Automatic · Petrol",
+    price: "Ksh 3,100,000"
+  },
+  {
+    id: 2,
+    image: "https://images.unsplash.com/photo-1503376763036-066120622c74?q=80&w=1920&auto=format&fit=crop",
+    title: "Land Cruiser V8",
+    subtitle: "2019 · Automatic · Diesel",
+    price: "Ksh 12,500,000"
+  },
+];
 
 export default function Hero() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  // 1. AUTO SLIDER FUNCTIONALITY
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 5000); // Changes every 5 seconds
+    return () => clearInterval(timer);
+  }, []);
+
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length);
+  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+
   return (
-    <div className="relative w-full h-screen bg-slate-900 flex flex-col justify-center items-center pt-20">
-      {/* Background Image - Using a reliable placeholder for now */}
-      <div className="absolute inset-0 z-0">
-        <Image 
-          src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=2800&auto=format&fit=crop"
-          alt="Luxury Car Background"
-          fill
-          className="object-cover opacity-50"
-          priority
-        />
-        {/* Gradient Overlay for better text readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/50 to-slate-900" />
-      </div>
-
-      {/* Hero Text Content */}
-      <div className="relative z-10 text-center max-w-4xl px-4 mb-12 mt-10">
-        <span className="inline-block py-1 px-3 rounded-full bg-blue-600/20 text-blue-400 border border-blue-500/30 text-xs md:text-sm font-semibold mb-6 backdrop-blur-sm">
-          #1 Trusted Dealership in Mombasa
-        </span>
-        <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight leading-tight">
-          Find Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">Dream Drive</span>
-        </h1>
-        <p className="text-slate-300 text-lg md:text-xl max-w-2xl mx-auto font-light">
-          Quality imports and locally used vehicles. Verified listings, transparent pricing, and instant paperwork.
-        </p>
-      </div>
-
-      {/* Search Filter Bar */}
-      <div className="relative z-20 w-full max-w-5xl px-4">
-        <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-4 rounded-2xl shadow-2xl ring-1 ring-white/10">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            
-            {/* Make/Model Search */}
-            <div className="relative group">
-              <div className="absolute left-3 top-3.5 text-gray-400 group-focus-within:text-blue-400">
-                <Search size={18} />
-              </div>
-              <input 
-                type="text" 
-                placeholder="Search Make (e.g. Toyota)" 
-                className="w-full h-12 pl-10 pr-4 rounded-xl bg-slate-800/80 border border-slate-700 text-white placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-sm"
-              />
+    <div className="relative h-[85vh] w-full overflow-hidden bg-obsidian">
+      {/* Background Slides */}
+      {slides.map((slide, index) => (
+        <div
+          key={slide.id}
+          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+            index === currentSlide ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          {/* Dark Overlay for text readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#141416] via-black/40 to-black/30 z-10" />
+          <img
+            src={slide.image}
+            alt={slide.title}
+            className="w-full h-full object-cover"
+          />
+          
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-4 mt-10">
+            <span className="bg-gold text-black px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-4 animate-fade-in-up">
+              Featured Vehicle
+            </span>
+            <h1 className="text-5xl md:text-7xl font-serif text-white mb-4 animate-fade-in-up delay-100">
+              {slide.title}
+            </h1>
+            <p className="text-xl text-zinc-300 mb-8 font-light animate-fade-in-up delay-200">
+              {slide.subtitle}
+            </p>
+            <div className="flex gap-4 animate-fade-in-up delay-300">
+              <Link href={`/inventory/${slide.id}`} className="bg-white text-black px-8 py-3 rounded-full font-bold hover:bg-zinc-200 transition-colors">
+                View Details
+              </Link>
+              <Link href="/inventory" className="border border-white text-white px-8 py-3 rounded-full font-bold hover:bg-white/10 transition-colors">
+                Browse All Cars
+              </Link>
             </div>
-
-            {/* Year Dropdown */}
-            <div className="relative group">
-              <div className="absolute left-3 top-3.5 text-gray-400 group-focus-within:text-blue-400">
-                <Calendar size={18} />
-              </div>
-              <select className="w-full h-12 pl-10 pr-4 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-300 focus:outline-none focus:border-blue-500 transition-all appearance-none cursor-pointer text-sm">
-                <option value="">Year (Any)</option>
-                <option value="2024">2024</option>
-                <option value="2023">2023</option>
-                <option value="2022">2016 - 2022</option>
-                <option value="2015">2010 - 2015</option>
-              </select>
-            </div>
-
-            {/* Price Dropdown */}
-            <div className="relative group">
-              <div className="absolute left-3 top-3.5 text-gray-400 group-focus-within:text-blue-400">
-                <Settings size={18} />
-              </div>
-              <select className="w-full h-12 pl-10 pr-4 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-300 focus:outline-none focus:border-blue-500 transition-all appearance-none cursor-pointer text-sm">
-                <option value="">Max Price (Ksh)</option>
-                <option value="1000000">Under 1M</option>
-                <option value="2500000">Under 2.5M</option>
-                <option value="5000000">Under 5M</option>
-                <option value="5000001">5M+</option>
-              </select>
-            </div>
-
-            {/* Action Button */}
-            <button className="h-12 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20 transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 text-sm">
-              Explore Inventory
-            </button>
-
           </div>
+        </div>
+      ))}
+
+      {/* 2. LUXURY SEARCH BAR (Floating at bottom) */}
+      <div className="absolute bottom-0 left-0 right-0 z-30 transform translate-y-1/2 px-4">
+        <div className="max-w-5xl mx-auto bg-obsidian-light border border-white/10 rounded-2xl p-6 shadow-2xl shadow-black/50 backdrop-blur-md">
+          <div className="flex items-center gap-2 mb-4">
+             <Search className="text-gold" size={20} />
+             <span className="text-white font-serif text-lg">Find Your Dream Car</span>
+          </div>
+          
+          <form className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <input 
+              type="text" 
+              placeholder="Make (e.g. Toyota)" 
+              className="bg-[#141416] border border-zinc-800 text-white px-4 py-3 rounded-xl focus:outline-none focus:border-gold transition-colors"
+            />
+             <input 
+              type="text" 
+              placeholder="Model (e.g. Harrier)" 
+              className="bg-[#141416] border border-zinc-800 text-white px-4 py-3 rounded-xl focus:outline-none focus:border-gold transition-colors"
+            />
+             <select className="bg-[#141416] border border-zinc-800 text-zinc-400 px-4 py-3 rounded-xl focus:outline-none focus:border-gold transition-colors appearance-none">
+                <option>Max Price</option>
+                <option>3M - 5M</option>
+                <option>5M - 10M</option>
+                <option>10M+</option>
+             </select>
+             
+             {/* THE GOLD BUTTON */}
+             <button type="submit" className="bg-gold hover:bg-gold-hover text-black font-bold py-3 rounded-xl transition-all shadow-[0_0_15px_rgba(180,142,85,0.3)] hover:shadow-[0_0_25px_rgba(180,142,85,0.5)]">
+               Search Inventory
+             </button>
+          </form>
         </div>
       </div>
     </div>
