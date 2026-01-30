@@ -4,9 +4,9 @@
 
 :root {
   /* "Obsidian & Bronze" Theme */
-  --foreground-rgb: 230, 230, 230;  /* Platinum text */
-  --background-base: 20, 20, 22;    /* Deep Warm Charcoal (Almost black, but brownish) */
-  --accent-gold: 180, 142, 85;      /* Metallic Bronze */
+  --foreground-rgb: 230, 230, 230;
+  --background-base: 20, 20, 22;
+  --accent-gold: 180, 142, 85;
   --accent-gold-hover: 153, 118, 65;
 }
 
@@ -14,20 +14,28 @@
   body {
     color: rgb(var(--foreground-rgb));
     background-color: rgb(var(--background-base));
-    /* A subtle warm vignette instead of cold blue */
     background-image: radial-gradient(circle at top, #2a2a2e, #141416); 
     min-height: 100vh;
+    
+    /* NEW TYPOGRAPHY SETTINGS */
+    font-family: var(--font-montserrat), sans-serif; /* Default to clean sans */
+  }
+
+  /* Automatically make all Headings use the Luxury Serif font */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-playfair), serif;
+    font-weight: 600; /* Semi-bold looks more premium */
+    letter-spacing: -0.02em; /* Tight tracking looks tighter/more expensive */
   }
 }
 
-/* Custom Scrollbar */
+/* ... keep your scrollbar settings below ... */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: #141416; }
 ::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #b48e55; } /* Gold on hover */
+::-webkit-scrollbar-thumb:hover { background: #b48e55; }
 
-/* Selection Color */
 ::selection {
-  background-color: #b48e55; /* Bronze Highlight */
+  background-color: #b48e55;
   color: black;
 }

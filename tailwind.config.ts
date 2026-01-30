@@ -1,12 +1,24 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  // This "src/**/*" pattern tells Tailwind: "Look in every single folder inside src"
   content: [
-    "./src/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        background: "var(--background)",
+        foreground: "var(--foreground)",
+      },
+      // PASTE THIS SECTION -----------------------
+      fontFamily: {
+        sans: ['var(--font-montserrat)', 'sans-serif'],
+        serif: ['var(--font-playfair)', 'serif'],
+      },
+      // ------------------------------------------
+    },
   },
   plugins: [],
 };
