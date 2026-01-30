@@ -1,62 +1,118 @@
+import { supabase } from '@/lib/supabaseClient';
 import Link from 'next/link';
+import Image from 'next/image';
+import Navbar from '@/components/Navbar';
+import { Fuel, Gauge, Settings, ArrowRight } from 'lucide-react';
 
-// Mock Data (Replace with your DB fetch later)
-const cars = [
-  { id: 1, title: "Toyota Harrier", price: "Ksh 3,100,000", year: 2017, fuel: "Petrol", image: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80" },
-  { id: 2, title: "Land Cruiser Prado", price: "Ksh 6,200,000", year: 2018, fuel: "Diesel", image: "https://images.unsplash.com/photo-1503376763036-066120622c74?q=80" },
-  { id: 3, title: "Mercedes C-Class", price: "Ksh 4,500,000", year: 2016, fuel: "Petrol", image: "https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80" },
-  { id: 4, title: "Range Rover Sport", price: "Ksh 10,500,000", year: 2020, fuel: "Diesel", image: "https://images.unsplash.com/photo-1609521263047-f8f205293f24?q=80" },
-  { id: 5, title: "Subaru Outback", price: "Ksh 2,800,000", year: 2017, fuel: "Petrol", image: "https://images.unsplash.com/photo-1626077366952-b96b34919532?q=80" },
-  { id: 6, title: "Lexus RX 450h", price: "Ksh 5,900,000", year: 2018, fuel: "Hybrid", image: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80" },
-];
+// Force dynamic rendering so new cars show up immediately
+export const revalidate = 0;
 
-export default function InventoryPage() {
+async function getCars() {
+  const { data } = await supabase
+    .from('cars')
+    .select('*')
+    .order('created_at', { ascending: false });
+  return data || [];
+}
+
+export default async function InventoryPage() {
+  const cars = await getCars();
+
   return (
-    <div className="bg-obsidian min-h-screen pt-24 pb-12 px-6">
-      <div className="max-w-7xl mx-auto">
-        
-        {/* Page Header */}
-        <div className="flex flex-col md:flex-row justify-between items-end mb-12 border-b border-white/10 pb-6">
-          <div>
-            <span className="text-gold uppercase tracking-widest text-sm font-bold">Our Collection</span>
-            <h1 className="text-4xl md:text-5xl font-serif text-white mt-2">Current Inventory</h1>
-          </div>
-          <div className="text-zinc-400 mt-4 md:mt-0">
-            Showing <span className="text-white font-bold">{cars.length}</span> Premium Vehicles
-          </div>
-        </div>
+    <div className="min-h-screen bg-[#141416] text-white font-sans selection:bg-[#b48e55] selection:text-black pb-20">
+      <Navbar />
 
-        {/* Inventory Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {cars.map((car) => (
-            <Link href={`/inventory/${car.id}`} key={car.id} className="group bg-[#1e1e24] rounded-2xl overflow-hidden hover:-translate-y-2 transition-transform duration-300 border border-white/5 hover:border-gold/30">
-              {/* Image */}
-              <div className="relative h-64 overflow-hidden">
-                <div className="absolute top-4 left-4 z-10 bg-black/50 backdrop-blur-md px-3 py-1 rounded-lg text-xs text-white border border-white/10">
-                  {car.year} • {car.fuel}
+      {/* Header Section */}
+      <div className="pt-32 pb-12 px-6 text-center border-b border-white/5 bg-[#141416]">
+        <h1 className="text-4xl md:text-5xl font-serif mb-4 text-white">
+          The <span className="text-[#b48e55]">Showroom</span>
+        </h1>
+        <p className="text-zinc-400 max-w-2xl mx-auto font-light">
+          Browse our exclusive collection of premium vehicles. Each car is rigorously inspected and ready for immediate ownership.
+        </p>
+      </div>
+
+      {/* Inventory Grid */}
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        {cars.length === 0 ? (
+          <div className="text-center py-20 bg-[#1e1e24] rounded-2xl border border-dashed border-white/10">
+            <h3 className="text-xl text-zinc-500 font-medium">No vehicles currently available.</h3>
+            <p className="text-zinc-600 mt-2">Check back soon for new arrivals.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {cars.map((car) => (
+              <Link 
+                key={car.id} 
+                href={`/inventory/${car.id}`}
+                className="group bg-[#1e1e24] rounded-xl overflow-hidden border border-white/5 hover:border-[#b48e55]/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(180,142,85,0.15)] flex flex-col"
+              >
+                {/* Image Container */}
+                <div className="relative h-64 overflow-hidden bg-black">
+                  {car.image_url ? (
+                    <Image 
+                      src={car.image_url} 
+                      alt={car.title} 
+                      fill 
+                      className="object-cover group-hover:scale-110 transition-transform duration-700" 
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-zinc-700 bg-[#141416]">
+                      No Image
+                    </div>
+                  )}
+                  
+                  {/* Status Badge */}
+                  {car.status === 'sold' && (
+                    <div className="absolute top-4 right-4 bg-red-900/90 text-red-100 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-red-500/30">
+                      Sold
+                    </div>
+                  )}
+                  {car.status !== 'sold' && (
+                    <div className="absolute top-4 right-4 bg-[#b48e55] text-black text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                      Available
+                    </div>
+                  )}
                 </div>
-                <img 
-                  src={car.image} 
-                  alt={car.title} 
-                  className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
-                />
-              </div>
-              
-              {/* Content */}
-              <div className="p-6">
-                <h3 className="text-2xl font-serif text-white mb-2 group-hover:text-gold transition-colors">
-                  {car.title}
-                </h3>
-                <p className="text-gold font-bold text-xl mb-4">{car.price}</p>
-                <div className="w-full h-[1px] bg-white/10 mb-4" />
-                <div className="flex justify-between items-center text-zinc-400 text-sm">
-                   <span>Available in Mombasa</span>
-                   <span className="group-hover:translate-x-1 transition-transform">View Details &rarr;</span>
+
+                {/* Content */}
+                <div className="p-6 flex flex-col flex-grow">
+                  <div className="flex-grow">
+                    <h2 className="text-xl font-medium text-white mb-2 line-clamp-1 group-hover:text-[#b48e55] transition-colors">
+                      {car.title}
+                    </h2>
+                    <p className="text-2xl font-serif text-[#b48e55] mb-6">
+                      Ksh {Number(car.price).toLocaleString()}
+                    </p>
+
+                    {/* Specs Grid */}
+                    <div className="grid grid-cols-3 gap-2 mb-6 border-t border-white/5 pt-4">
+                      <div className="flex flex-col items-center justify-center p-2 bg-[#141416] rounded-lg">
+                        <Gauge size={16} className="text-zinc-500 mb-1" />
+                        <span className="text-[10px] text-zinc-400 uppercase tracking-wider">Mileage</span>
+                        <span className="text-xs font-medium text-zinc-200">{car.mileage || '-'}</span>
+                      </div>
+                      <div className="flex flex-col items-center justify-center p-2 bg-[#141416] rounded-lg">
+                        <Settings size={16} className="text-zinc-500 mb-1" />
+                        <span className="text-[10px] text-zinc-400 uppercase tracking-wider">Trans</span>
+                        <span className="text-xs font-medium text-zinc-200">{car.transmission?.substring(0, 4) || 'Auto'}</span>
+                      </div>
+                      <div className="flex flex-col items-center justify-center p-2 bg-[#141416] rounded-lg">
+                        <Fuel size={16} className="text-zinc-500 mb-1" />
+                        <span className="text-[10px] text-zinc-400 uppercase tracking-wider">Fuel</span>
+                        <span className="text-xs font-medium text-zinc-200">{car.fuel || 'Petrol'}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center text-[#b48e55] font-bold text-sm uppercase tracking-widest group-hover:translate-x-2 transition-transform">
+                    View Details <ArrowRight size={16} className="ml-2" />
+                  </div>
                 </div>
-              </div>
-            </Link>
-          ))}
-        </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
