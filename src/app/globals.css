@@ -3,52 +3,31 @@
 @tailwind utilities;
 
 :root {
-  /* Premium Dark Palette */
-  --foreground-rgb: 226, 232, 240; /* Slate 200 (Softer than harsh white) */
-  --background-base: 2, 6, 23;     /* Slate 950 (Deepest Blue-Black) */
+  /* "Obsidian & Bronze" Theme */
+  --foreground-rgb: 230, 230, 230;  /* Platinum text */
+  --background-base: 20, 20, 22;    /* Deep Warm Charcoal (Almost black, but brownish) */
+  --accent-gold: 180, 142, 85;      /* Metallic Bronze */
+  --accent-gold-hover: 153, 118, 65;
 }
 
 @layer base {
   body {
     color: rgb(var(--foreground-rgb));
     background-color: rgb(var(--background-base));
-    /* Adds a very subtle gradient for depth, preventing it from looking flat */
-    background-image: linear-gradient(to bottom, #020617, #0f172a); 
+    /* A subtle warm vignette instead of cold blue */
+    background-image: radial-gradient(circle at top, #2a2a2e, #141416); 
     min-height: 100vh;
-    /* Improves font readability */
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  
-  /* Smooth scrolling for the whole page */
-  html {
-    scroll-behavior: smooth;
   }
 }
 
-/* --- OPTIONAL: Custom Scrollbar (Chrome/Safari/Edge) --- */
-/* This makes the browser scrollbar look part of the dark theme */
-::-webkit-scrollbar {
-  width: 10px;
-}
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #141416; }
+::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #b48e55; } /* Gold on hover */
 
-::-webkit-scrollbar-track {
-  background: #020617; /* Matches body background */
-}
-
-::-webkit-scrollbar-thumb {
-  background: #1e293b; /* Slate 800 */
-  border-radius: 5px;
-  border: 2px solid #020617; /* Creates padding effect */
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #334155; /* Slate 700 on hover */
-}
-
-/* --- OPTIONAL: Selection Color --- */
-/* When a user highlights text, it turns blue instead of default blue */
+/* Selection Color */
 ::selection {
-  background-color: #3b82f6; /* Blue 500 */
-  color: white;
+  background-color: #b48e55; /* Bronze Highlight */
+  color: black;
 }
