@@ -44,7 +44,7 @@ export default function Hero() {
     return (
         <div className="h-[85vh] w-full bg-[#141416] flex flex-col items-center justify-center text-[#b48e55]">
             <div className="animate-pulse flex flex-col items-center">
-                <span className="text-2xl font-serif">TAJIRI MOTORS</span>
+                <span className="text-2xl font-serif">TAJIREE MOTORS</span>
                 <span className="text-sm tracking-widest mt-2 uppercase">Loading Luxury...</span>
             </div>
         </div>

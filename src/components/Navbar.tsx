@@ -17,7 +17,7 @@ export default function Navbar() {
             TM
           </div>
           <span className="text-2xl font-serif font-bold text-white tracking-wide">
-            Tajiri<span className="text-gold">Motors</span>
+            Tajiree<span className="text-gold">Motors</span>
           </span>
         </Link>
 
